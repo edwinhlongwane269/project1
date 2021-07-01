@@ -43,32 +43,29 @@ class EditForm(forms.Form):
     data = forms.CharField(label="data", widget=forms.TextInput(attrs={'id': "edit-entry"}))
 
 
-
+   
 def search(request):
-    if request.method =="POST":
-        entry_list = [] # list entries
-        entry_all = util.list_entries() # Get all entries
-        form = SearchFrom()
+    form = SearchForm()
+    is_substring_of_queries = []
+    if request.method == "GET":
+        form = SearchForm(request.GET)
         if form.is_valid():
-            query = form.cleaned_data["query"]
-            for entry in entry_all:
-                if query.lower() == entry.lower():
-                    title = title,
-                    entry = util.get_entry(title)
-                    return HtppResponseRedirect(reverse('entry', args=[title]))
-                if query.lower() in entry.lower():
-                    entries_found.append(entry)
-            return render(request, 'encyclopedia/search.html', {
-                "result": entries_found,
-                "query": query,
-                "form": SearchForm()
-            })       
-    # Render page with Results        
-    return render(request, 'encyclopedia/search.html', {
-        "result": "",
-        "query": "",
-        "form": SearchForm()
-    })
+            for entry in util.list_entries():
+                existsIdenticalResult = form.cleaned_data["query"].casefold() == entry.casefold() 
+                existsResult = form.cleaned_data["query"].casefold() in entry.casefold()    
+                if existsIdenticalResult:
+                    return HttpResponseRedirect(reverse("wiki",
+                     kwargs={"page_title": entry}))
+                elif existsResult: 
+                    is_substring_of_queries.append(entry)      
+    context = {
+        "form": SearchForm(),
+        "is_substring_of_queries": is_substring_of_queries
+    }
+
+    response = render(request, "encyclopedia/search.html", context)
+    return response
+
 
 def create(request):
     if request.method == "POST":
@@ -110,7 +107,7 @@ def edit(request):
         # Get data for entry
         entry= util.get_entry(title)
         # Display Content for entry to be edited
-        edit_form= EditFrom()
+        edit_form= EditForm()
         if edit_form.is_valid():
             title = form.cleaned_data["title"]
             data = form.cleaned_data["data"]
