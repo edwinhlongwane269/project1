@@ -1,0 +1,18 @@
+{% extends 'encyclopedia/layout.html' %}
+
+{% block title %} Edwin's Wiki {% endblock %} 
+
+{% block body %}
+  <h1>Entry Edit</h1>
+   {% if error %}
+    <p style="color:red">{{ error }}</p>
+   {% else %}
+    <p style="color:green">{{ msg_success }}</p>
+   {% endif %}
+  <form action="{% url 'submit' %}" method="post">
+    {% csrf_token %}
+    {{ editform }}
+    <br>
+    <button type"submit" class="btn btn-primary" >Submit</button>
+  </form>
+{%endblock %}

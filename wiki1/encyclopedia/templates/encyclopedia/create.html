@@ -1,0 +1,17 @@
+{% extends 'encyclopedia/layout.html' %}
+
+{% block title %}Edwin's Wiki Project{% endblock %}
+
+{% block body %}
+  <h1>Create Entry</h1>
+  {% if error %}
+    <p style="color:red">{{ error }}</p>
+  {% endif %}
+  </br>
+  <form action="{% url 'create' %}" method="post">
+     {% csrf_token %}
+     {{ newpageform }}
+     <br></br>
+     <button class="btn btn-secondary">Submit</button>
+  </form>  
+{% endblock %}
