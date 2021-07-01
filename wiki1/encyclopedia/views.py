@@ -33,6 +33,7 @@ def entry(request, title):
 # Serach form
 class SearchForm(forms.Form):
     query = forms.CharField(label="", widget=forms.TextInput(attrs={'placeholder': 'Search Wiki'}))
+    
 # New entry form
 class NewPageForm(forms.Form):
     title = forms.CharField(label="title", widget=forms.TextInput(attrs={'id': 'new-entry-title'}))
@@ -47,7 +48,7 @@ class EditForm(forms.Form):
 def search(request):
     form = SearchForm()
     is_substring_of_queries = []
-    if request.method == "GET":
+    if request.method == "POST":
         form = SearchForm(request.GET)
         if form.is_valid():
             for entry in util.list_entries():
@@ -55,7 +56,7 @@ def search(request):
                 existsResult = form.cleaned_data["query"].casefold() in entry.casefold()    
                 if existsIdenticalResult:
                     return HttpResponseRedirect(reverse("wiki",
-                     kwargs={"page_title": entry}))
+                     kwargs={"title": entry}))
                 elif existsResult: 
                     is_substring_of_queries.append(entry)      
     context = {

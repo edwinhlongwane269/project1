@@ -8,7 +8,7 @@
    <ul>
     <li class="no-bullet">Displaying Results for {{ query }}</li>
      <hr>
-     {% if results == 1 %}
+     {% if results == query %}
        <p>Found {{ results }} results</p>
        <br>
      {% elif results > 1 %}
